@@ -33,6 +33,8 @@ if (!class_exists("nglazyload")) {
         {
             unset($attr['sizes']);
             $attr['title'] = get_the_title($attachment->ID);
+            $attr['data-ngll-src']=$attr['src'];
+            $attr['src']=NGLL::dataImg();
             return $attr;
         }
 
