@@ -33,7 +33,7 @@ if (!class_exists("nglazyload")) {
         {
             unset($attr['sizes']);
             $attr['title'] = get_the_title($attachment->ID);
-            $attr['data-ngll-src']=$attr['src'];
+            $attr[NGLL::dataAttr()]=$attr['src'];
             $attr['src']=NGLL::dataImg();
             return $attr;
         }
@@ -52,7 +52,7 @@ if (!class_exists("nglazyload")) {
             } else {
                 $html = '<img src="' .
                 NGLL::dataImg() .
-                    '" data-ngll-src="' . $src[0] . '" alt="' . $alt . '" class="' . $class . '" />';
+                    '" '.NGLL::dataAttrValue($src[0]) . '" alt="' . $alt . '" class="' . $class . '" />';
             }
             return $html;
         }
@@ -81,6 +81,16 @@ new nglazyload();
 
 abstract class NGLL
 {
+    public static function dataAttr()
+    {
+        return 'data-ngll-src';
+    }
+
+    public static function dataAttrValue($src)
+    {
+        return ' '.self::dataAttr.'="'.$src.'" ';
+    }
+
     public static function dataImg()
     {
         return 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
