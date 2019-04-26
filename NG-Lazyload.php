@@ -29,7 +29,7 @@ if (!class_exists("nglazyload")) {
                 'post_thumbnail_html',
                 array(
                     $this,
-                    'filterThumbnail',
+                    'filterContent',
                 )
             );
             add_filter(
@@ -69,19 +69,6 @@ if (!class_exists("nglazyload")) {
                 $content = str_replace($tag, $newtag, $content);
             }
             return $content;
-        }
-
-        /**
-         * Filter Thumbnail
-         * 
-         * @param string $html content
-         *
-         * @return void
-         */
-        public function filterThumbnail(
-            $html
-        ) {         
-            return $this->filterContent($html);
         }
 
         /**
