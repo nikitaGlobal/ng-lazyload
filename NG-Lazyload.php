@@ -25,38 +25,70 @@ if (!class_exists("nglazyload")) {
             $this->prefix = 'nglazyload';
             $this->version = '1.0';
             add_action('wp_enqueue_scripts', array($this, 'scripts'));
-            add_filter('post_thumbnail_html', array($this, 'postThumbnailRemoveSize'), 1, 5);
-            add_filter('wp_get_attachment_image_attributes', array($this, 'thumbnailFilter'), 10, 3);
+            add_filter(
+                'post_thumbnail_html',
+                array(
+                    $this,
+                    'filterThumbnail',
+                )
+            );
+            add_filter(
+                'wp_get_attachment_image_attributes',
+                array(
+                    $this,
+                    'thumbnailFilter',
+                ),
+                10,
+                3
+            );
+            add_filter('the_content', array($this, 'filterContent'));
         }
 
         public function thumbnailFilter($attr, $attachment, $size)
         {
             unset($attr['sizes']);
             $attr['title'] = get_the_title($attachment->ID);
-            $attr[NGLL::dataAttr()]=$attr['src'];
-            $attr['src']=NGLL::dataImg();
+            $attr[NGLL::dataAttr()] = $attr['src'];
+            $attr['src'] = NGLL::dataImg();
             return $attr;
         }
 
-        public function postThumbnailRemoveSize($html, $post_id, $post_thumbnail_id, $size, $attr)
+        public function filterContent($content)
         {
-            $id = get_post_thumbnail_id();
-            $src = wp_get_attachment_image_src($id, $size);
-            $alt = get_the_title($id);
-            $class = '';
-            if (isset($attr['class'])) {
-                $class = $attr['class'];
+            preg_match_all('#(<img.*?>)#s', $content, $images);
+            foreach ($images[0] as $tag) {
+                $newtag = $tag;
+                $newtag = str_replace('src=', NGLL::dataAttr() . '=', $newtag);
+                $newtag = str_replace(
+                    '<img',
+                    '<img src="' .
+                    NGLL::dataImg() .
+                    '"',
+                    $newtag
+                );
+                $content = str_replace($tag, $newtag, $content);
             }
-            if (strpos($class, 'retina') !== false) {
-                $html = '<img src="" alt="" data-src="' . $src[0] . '" data-alt="' . $alt . '" class="' . $class . '" />';
-            } else {
-                $html = '<img src="' .
-                NGLL::dataImg() .
-                    '" '.NGLL::dataAttrValue($src[0]) . '" alt="' . $alt . '" class="' . $class . '" />';
-            }
-            return $html;
+            return $content;
         }
 
+        /**
+         * Filter Thumbnail
+         * 
+         * @param string $html content
+         *
+         * @return void
+         */
+        public function filterThumbnail(
+            $html
+        ) {         
+            return $this->filterContent($html);
+        }
+
+        /**
+         * Engueue plugin.js
+         *
+         * @return void
+         */
         public function scripts()
         {
             wp_register_script(
@@ -81,18 +113,37 @@ new nglazyload();
 
 abstract class NGLL
 {
+    /**
+     * Attribue name
+     *
+     * @return void
+     */
     public static function dataAttr()
     {
         return 'data-ngll-src';
     }
 
+    /**
+     * Generate data html tag attribute for real image
+     *
+     * @param string $src string with link
+     *
+     * @return void
+     */
     public static function dataAttrValue($src)
     {
-        return ' '.self::dataAttr.'="'.$src.'" ';
+        return ' ' . self::dataAttr . '="' . $src . '" ';
     }
 
+    /**
+     * Base64 encoded 1x1 white gif
+     * The smallest possible image src
+     *
+     * @return void
+     */
     public static function dataImg()
     {
-        return 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+        return 'data:image/gif;base64,' .
+            'R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
     }
 }
