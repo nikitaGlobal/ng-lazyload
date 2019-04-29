@@ -12,8 +12,8 @@ PHP version 7.2
  *
 @category NikitaGlobal
 @package  NikitaGlobal
-@author   Nikita Menshutin <plugins@nikita.global>
-@license  http://nikita.global commercial
+@author   Nikita Menshutin <wpplugins@nikita.global>
+@license  http://opensource.org/licenses/gpl-license.php GNU Public License
 @link     http://nikita.global
  * */
 defined('ABSPATH') or die("No script kiddies please!");
@@ -23,8 +23,8 @@ if (!class_exists("nglazyload")) {
      *
      * @category NikitaGlobal
      * @package  NikitaGlobal
-     * @author   Nikita Menshutin <plugins@nikita.global>
-     * @license  http://nikita.global commercial
+     * @author   Nikita Menshutin <wpplugins@nikita.global>
+     * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
      * @link     http://nikita.global
      */
     class Nglazyload
@@ -144,8 +144,8 @@ new nglazyload();
  *
  * @category NikitaGlobal
  * @package  NikitaGlobal
- * @author   Nikita Menshutin <plugins@nikita.global>
- * @license  http://nikita.global commercial
+ * @author   Nikita Menshutin <wpplugins@nikita.global>
+ * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
  * @link     http://nikita.global
  */
 abstract class NGLL
