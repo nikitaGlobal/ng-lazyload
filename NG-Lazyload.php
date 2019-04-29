@@ -12,14 +12,28 @@ PHP version 7.2
  *
 @category NikitaGlobal
 @package  NikitaGlobal
-@author   Nikita Menshutin <nikita@nikita.global>
+@author   Nikita Menshutin <plugins@nikita.global>
 @license  http://nikita.global commercial
 @link     http://nikita.global
  * */
 defined('ABSPATH') or die("No script kiddies please!");
 if (!class_exists("nglazyload")) {
-    class nglazyload
+    /**
+     * Our main class goes here
+     *
+     * @category NikitaGlobal
+     * @package  NikitaGlobal
+     * @author   Nikita Menshutin <plugins@nikita.global>
+     * @license  http://nikita.global commercial
+     * @link     http://nikita.global
+     */
+    class Nglazyload
     {
+        /**
+         * Construct method
+         *
+         * @return void
+         */
         public function __construct()
         {
             $this->prefix = 'nglazyload';
@@ -44,31 +58,58 @@ if (!class_exists("nglazyload")) {
             add_filter('the_content', array($this, 'filterContent'));
         }
 
+        /**
+         * Filtering thumbnail attributes
+         *
+         * @param array  $attr       attributes
+         * @param object $attachment att
+         * @param array  $size       size
+         *
+         * @return array with added lazyload attributes
+         */
         public function thumbnailFilter($attr, $attachment, $size)
         {
-            unset($attr['sizes']);
-            $attr['title'] = get_the_title($attachment->ID);
             $attr[NGLL::dataAttr()] = $attr['src'];
             $attr['src'] = NGLL::dataImg();
             return $attr;
         }
 
+        /**
+         * Replacing all images with
+         * lazy-load attributes
+         *
+         * @param string $content html content
+         *
+         * @return string updated images if any
+         */
         public function filterContent($content)
         {
-            preg_match_all('#(<img.*?>)#s', $content, $images);
-            foreach ($images[0] as $tag) {
-                $newtag = $tag;
-                $newtag = str_replace('src=', NGLL::dataAttr() . '=', $newtag);
-                $newtag = str_replace(
-                    '<img',
-                    '<img src="' .
-                    NGLL::dataImg() .
-                    '"',
-                    $newtag
-                );
-                $content = str_replace($tag, $newtag, $content);
+            $xmlprefix = '<?xml encoding="utf-8" ?>';
+            $doc = new DOMDocument('1.0', 'UTF-8');
+            $doc->loadHTML(
+                $xmlprefix . $content //,
+                //            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+            );
+            $images = $doc->getElementsByTagName('img');
+            if ($images->length == 0) {
+                return $content;
             }
-            return $content;
+            foreach ($images as $image) {
+                $src = $image->getAttribute('src');
+                $image->setAttribute('src', NGLL::dataImg());
+                $image->setAttribute(NGLL::dataAttr(), $src);
+            }
+            return html_entity_decode(
+                str_replace(
+                    $xmlprefix,
+                    '',
+                    preg_replace(
+                        '~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i',
+                        '',
+                        $doc->saveHTML()
+                    )
+                )
+            );
         }
 
         /**
@@ -98,6 +139,15 @@ if (!class_exists("nglazyload")) {
 }
 new nglazyload();
 
+/**
+ * Our abstract class goes here
+ *
+ * @category NikitaGlobal
+ * @package  NikitaGlobal
+ * @author   Nikita Menshutin <plugins@nikita.global>
+ * @license  http://nikita.global commercial
+ * @link     http://nikita.global
+ */
 abstract class NGLL
 {
     /**
