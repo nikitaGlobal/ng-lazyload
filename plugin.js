@@ -1,8 +1,8 @@
 $(document).ready(function(){
 	nglazyLoad();
-	setTimeout(function () {
+	setInterval(function () {
 		nglazyLoad();
-	}, 1000);
+	}, 500);
 	$(window).scroll(function () {
 		nglazyLoad();
     });

@@ -12,49 +12,111 @@ PHP version 7.2
  *
 @category NikitaGlobal
 @package  NikitaGlobal
-@author   Nikita Menshutin <nikita@nikita.global>
+@author   Nikita Menshutin <plugins@nikita.global>
 @license  http://nikita.global commercial
 @link     http://nikita.global
  * */
 defined('ABSPATH') or die("No script kiddies please!");
 if (!class_exists("nglazyload")) {
-    class nglazyload
+    /**
+     * Our main class goes here
+     *
+     * @category NikitaGlobal
+     * @package  NikitaGlobal
+     * @author   Nikita Menshutin <plugins@nikita.global>
+     * @license  http://nikita.global commercial
+     * @link     http://nikita.global
+     */
+    class Nglazyload
     {
+        /**
+         * Construct method
+         *
+         * @return void
+         */
         public function __construct()
         {
             $this->prefix = 'nglazyload';
             $this->version = '1.0';
             add_action('wp_enqueue_scripts', array($this, 'scripts'));
-            add_filter('post_thumbnail_html', array($this, 'postThumbnailRemoveSize'), 1, 5);
-            add_filter('wp_get_attachment_image_attributes', array($this, 'thumbnailFilter'), 10, 3);
+            add_filter(
+                'post_thumbnail_html',
+                array(
+                    $this,
+                    'filterContent',
+                )
+            );
+            add_filter(
+                'wp_get_attachment_image_attributes',
+                array(
+                    $this,
+                    'thumbnailFilter',
+                ),
+                10,
+                3
+            );
+            add_filter('the_content', array($this, 'filterContent'));
         }
 
+        /**
+         * Filtering thumbnail attributes
+         *
+         * @param array  $attr       attributes
+         * @param object $attachment att
+         * @param array  $size       size
+         *
+         * @return array with added lazyload attributes
+         */
         public function thumbnailFilter($attr, $attachment, $size)
         {
-            unset($attr['sizes']);
-            $attr['title'] = get_the_title($attachment->ID);
+            $attr[NGLL::dataAttr()] = $attr['src'];
+            $attr['src'] = NGLL::dataImg();
             return $attr;
         }
 
-        public function postThumbnailRemoveSize($html, $post_id, $post_thumbnail_id, $size, $attr)
+        /**
+         * Replacing all images with
+         * lazy-load attributes
+         *
+         * @param string $content html content
+         *
+         * @return string updated images if any
+         */
+        public function filterContent($content)
         {
-            $id = get_post_thumbnail_id();
-            $src = wp_get_attachment_image_src($id, $size);
-            $alt = get_the_title($id);
-            $class = '';
-            if (isset($attr['class'])) {
-                $class = $attr['class'];
+            $xmlprefix = '<?xml encoding="utf-8" ?>';
+            $doc = new DOMDocument('1.0', 'UTF-8');
+            $doc->loadHTML(
+                $xmlprefix . $content //,
+                //            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+            );
+            $images = $doc->getElementsByTagName('img');
+            if ($images->length == 0) {
+                return $content;
             }
-            if (strpos($class, 'retina') !== false) {
-                $html = '<img src="" alt="" data-src="' . $src[0] . '" data-alt="' . $alt . '" class="' . $class . '" />';
-            } else {
-                $html = '<img src="' .
-                NGLL::dataImg() .
-                    '" data-ngll-src="' . $src[0] . '" alt="' . $alt . '" class="' . $class . '" />';
+            foreach ($images as $image) {
+                $src = $image->getAttribute('src');
+                $image->setAttribute('src', NGLL::dataImg());
+                $image->setAttribute(NGLL::dataAttr(), $src);
             }
-            return $html;
+            return html_entity_decode(
+                str_replace(
+                    $xmlprefix,
+                    '',
+                    preg_replace(
+                        '~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i',
+                        '',
+                        $doc->saveHTML()
+                    )
+                )
+            );
         }
 
+        /**
+         * Engueue plugin.js
+         *
+         * @return void
+         */
         public function scripts()
         {
             wp_register_script(
@@ -77,10 +139,48 @@ if (!class_exists("nglazyload")) {
 }
 new nglazyload();
 
+/**
+ * Our abstract class goes here
+ *
+ * @category NikitaGlobal
+ * @package  NikitaGlobal
+ * @author   Nikita Menshutin <plugins@nikita.global>
+ * @license  http://nikita.global commercial
+ * @link     http://nikita.global
+ */
 abstract class NGLL
 {
+    /**
+     * Attribue name
+     *
+     * @return void
+     */
+    public static function dataAttr()
+    {
+        return 'data-ngll-src';
+    }
+
+    /**
+     * Generate data html tag attribute for real image
+     *
+     * @param string $src string with link
+     *
+     * @return void
+     */
+    public static function dataAttrValue($src)
+    {
+        return ' ' . self::dataAttr . '="' . $src . '" ';
+    }
+
+    /**
+     * Base64 encoded 1x1 white gif
+     * The smallest possible image src
+     *
+     * @return void
+     */
     public static function dataImg()
     {
-        return 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+        return 'data:image/gif;base64,' .
+            'R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
     }
 }
