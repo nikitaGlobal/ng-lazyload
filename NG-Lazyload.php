@@ -2,7 +2,6 @@
 
 /**
 Plugin Name: NG Lazyload
-Plugin URI: http://nikita.global
 Description: Remove width, height, implement lazyload
 Author: Nikita Menshutin
 Version: 1.0
