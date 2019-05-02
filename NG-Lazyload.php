@@ -2,9 +2,9 @@
 
 /**
 Plugin Name: NG Lazyload
-Description: Remove width, height, implement lazyload
+Description: Implements lazyload for thumbnails and content images
 Author: Nikita Menshutin
-Version: 1.0
+Version: 1.1
 Author URI: http://nikita.global
 
 PHP version 7.2
@@ -36,7 +36,7 @@ if (!class_exists("nglazyload")) {
         public function __construct()
         {
             $this->prefix = 'nglazyload';
-            $this->version = '1.0';
+            $this->version = '1.1';
             add_action('wp_enqueue_scripts', array($this, 'scripts'));
             add_filter(
                 'post_thumbnail_html',
