@@ -75,28 +75,27 @@ if (!class_exists("nglazyload")) {
         }
 
         /**
-        * Replacing all background images in styles with
-        * lazy-load attributes
-        *
-        * @param string $content html content
-        *
-        * @return string updated images if any
-        */
+         * Replacing all background images in styles with
+         * lazy-load attributes
+         *
+         * @param string $content html content
+         *
+         * @return string updated images if any
+         */
         public function filterContentBackgroundImages($content)
         {
-            $match = '/<[^>]*background\-image[^url]*url[^(]*\(([^\)]*)\)[^>]*>/';
-            preg_match_all($match, $content, $matches);
-            if (empty($matches[0])) {
-                return $content;
-            }            
-            foreach ($matches[0] as $key=>$tag) {
-                $url=$matches[1][$key];
-                $newtag=$tag;
-                $newtag=str_replace($url, NGLL::dataImg(), $newtag);
-                $newtag=str_replace('>', NGLL::dataAttrValue($url,true).'>', $newtag);
-                $content=str_replace($tag, $newtag, $content);
-            }
-            return $content;
+            $match = '#<[^>]*background\-image[^url]*url[^(]*\(([^\)]*)\)[^>]*>#';
+            return preg_replace_callback(
+                $match,
+                function ($matches) {
+                    $newtag = $matches[0];
+                    $url = $matches[1];
+                    $newtag = str_replace($url, NGLL::dataImg(), $newtag);
+                    $newtag = str_replace('>', NGLL::dataAttrValue($url, true) . '>', $newtag);
+                    return $newtag;
+                },
+                $content
+            );
         }
 
         /**
@@ -113,7 +112,7 @@ if (!class_exists("nglazyload")) {
             $doc = new DOMDocument('1.0', 'UTF-8');
             $doc->loadHTML(
                 $xmlprefix . $content //,
-                //            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+                // LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
             );
             $images = $doc->getElementsByTagName('img');
             if ($images->length == 0) {
@@ -129,9 +128,7 @@ if (!class_exists("nglazyload")) {
                     $xmlprefix,
                     '',
                     preg_replace(
-                        '~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i',
-                        '',
-                        $doc->saveHTML()
+                        '~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i', '', $doc->saveHTML()
                     )
                 )
             );
@@ -168,10 +165,10 @@ new nglazyload();
  * Our abstract class goes here
  *
  * @category NikitaGlobal
- * @package  NikitaGlobal
- * @author   Nikita Menshutin <wpplugins@nikita.global>
- * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
- * @link     http://nikita.global
+ * @package NikitaGlobal
+ * @author Nikita Menshutin <wpplugins@nikita.global>
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @link http://nikita.global
  */
 abstract class NGLL
 {
@@ -193,13 +190,13 @@ abstract class NGLL
      *
      * @return void
      */
-    public static function dataAttrValue($src, $background=false)
+    public static function dataAttrValue($src, $background = false)
     {
-        $suffix='';
+        $suffix = '';
         if ($background) {
-            $suffix='b';
+            $suffix = 'b';
         }
-        return ' ' . self::dataAttr() .$suffix. '="' . $src . '" ';
+        return ' ' . self::dataAttr() . $suffix . '="' . $src . '" ';
     }
 
     /**
