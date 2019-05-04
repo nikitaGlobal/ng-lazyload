@@ -4,7 +4,7 @@
 Plugin Name: NG Lazyload
 Description: Implements lazyload for thumbnails and content images
 Author: Nikita Menshutin
-Version: 1.1
+Version: 1.2
 Author URI: http://nikita.global
 
 PHP version 7.2
@@ -36,7 +36,7 @@ if (!class_exists("nglazyload")) {
         public function __construct()
         {
             $this->prefix = 'nglazyload';
-            $this->version = '1.1';
+            $this->version = '1.2';
             add_action('wp_enqueue_scripts', array($this, 'scripts'));
             add_filter(
                 'post_thumbnail_html',
@@ -91,7 +91,12 @@ if (!class_exists("nglazyload")) {
                     $newtag = $matches[0];
                     $url = $matches[1];
                     $newtag = str_replace($url, NGLL::dataImg(), $newtag);
-                    $newtag = str_replace('>', NGLL::dataAttrValue($url, true) . '>', $newtag);
+                    $newtag = str_replace(
+                        '>', 
+                        NGLL::dataAttrValue($url, true) . 
+                        '>', 
+                        $newtag
+                    );
                     return $newtag;
                 },
                 $content
@@ -128,7 +133,9 @@ if (!class_exists("nglazyload")) {
                     $xmlprefix,
                     '',
                     preg_replace(
-                        '~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i', '', $doc->saveHTML()
+                        '~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i', 
+                        '', 
+                        $doc->saveHTML()
                     )
                 )
             );
@@ -165,10 +172,10 @@ new nglazyload();
  * Our abstract class goes here
  *
  * @category NikitaGlobal
- * @package NikitaGlobal
- * @author Nikita Menshutin <wpplugins@nikita.global>
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- * @link http://nikita.global
+ * @package  NikitaGlobal
+ * @author   Nikita Menshutin <wpplugins@nikita.global>
+ * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @link     http://nikita.global
  */
 abstract class NGLL
 {
@@ -185,8 +192,8 @@ abstract class NGLL
     /**
      * Generate data html tag attribute for real image
      *
-     * @param string $src string with link
-     * @param bool $background if tag for background image
+     * @param string $src        string with link
+     * @param bool   $background if tag for background image
      *
      * @return void
      */
@@ -196,7 +203,7 @@ abstract class NGLL
         if ($background) {
             $suffix = 'b';
         }
-        return ' ' . self::dataAttr() . $suffix . '="' . $src . '" ';
+        return ' ' . self::dataAttr() . $suffix . '="' . $src . '"';
     }
 
     /**
