@@ -42,7 +42,7 @@ if (!class_exists("nglazyload")) {
                 'post_thumbnail_html',
                 array(
                     $this,
-                    'filterContent',
+                    'filterContentTags',
                 )
             );
             add_filter(
@@ -54,7 +54,8 @@ if (!class_exists("nglazyload")) {
                 10,
                 3
             );
-            add_filter('the_content', array($this, 'filterContent'));
+            add_filter('the_content', array($this, 'filterContentTags'));
+            add_filter('the_content', array($this, 'filterContentBackgroundImages'));
         }
 
         /**
@@ -74,6 +75,31 @@ if (!class_exists("nglazyload")) {
         }
 
         /**
+        * Replacing all background images in styles with
+        * lazy-load attributes
+        *
+        * @param string $content html content
+        *
+        * @return string updated images if any
+        */
+        public function filterContentBackgroundImages($content)
+        {
+            $match = '/<[^>]*background\-image[^url]*url[^(]*\(([^\)]*)\)[^>]*>/';
+            preg_match_all($match, $content, $matches);
+            if (empty($matches[0])) {
+                return $content;
+            }            
+            foreach ($matches[0] as $key=>$tag) {
+                $url=$matches[1][$key];
+                $newtag=$tag;
+                $newtag=str_replace($url, NGLL::dataImg(), $newtag);
+                $newtag=str_replace('>', NGLL::dataAttrValue($url,true).'>', $newtag);
+                $content=str_replace($tag, $newtag, $content);
+            }
+            return $content;
+        }
+
+        /**
          * Replacing all images with
          * lazy-load attributes
          *
@@ -81,7 +107,7 @@ if (!class_exists("nglazyload")) {
          *
          * @return string updated images if any
          */
-        public function filterContent($content)
+        public function filterContentTags($content)
         {
             $xmlprefix = '<?xml encoding="utf-8" ?>';
             $doc = new DOMDocument('1.0', 'UTF-8');
@@ -112,7 +138,7 @@ if (!class_exists("nglazyload")) {
         }
 
         /**
-         * Engueue plugin.js
+         * Enqueue plugin.js
          *
          * @return void
          */
@@ -163,12 +189,17 @@ abstract class NGLL
      * Generate data html tag attribute for real image
      *
      * @param string $src string with link
+     * @param bool $background if tag for background image
      *
      * @return void
      */
-    public static function dataAttrValue($src)
+    public static function dataAttrValue($src, $background=false)
     {
-        return ' ' . self::dataAttr . '="' . $src . '" ';
+        $suffix='';
+        if ($background) {
+            $suffix='b';
+        }
+        return ' ' . self::dataAttr() .$suffix. '="' . $src . '" ';
     }
 
     /**
