@@ -4,7 +4,7 @@
 Plugin Name: NG Lazyload
 Description: Implements lazyload for thumbnails and content images
 Author: Nikita Menshutin
-Version: 1.1
+Version: 1.2
 Author URI: http://nikita.global
 
 PHP version 7.2
@@ -36,13 +36,13 @@ if (!class_exists("nglazyload")) {
         public function __construct()
         {
             $this->prefix = 'nglazyload';
-            $this->version = '1.1';
+            $this->version = '1.2';
             add_action('wp_enqueue_scripts', array($this, 'scripts'));
             add_filter(
                 'post_thumbnail_html',
                 array(
                     $this,
-                    'filterContent',
+                    'filterContentTags',
                 )
             );
             add_filter(
@@ -54,7 +54,8 @@ if (!class_exists("nglazyload")) {
                 10,
                 3
             );
-            add_filter('the_content', array($this, 'filterContent'));
+            add_filter('the_content', array($this, 'filterContentTags'));
+            add_filter('the_content', array($this, 'filterContentBackgroundImages'));
         }
 
         /**
@@ -74,6 +75,35 @@ if (!class_exists("nglazyload")) {
         }
 
         /**
+         * Replacing all background images in styles with
+         * lazy-load attributes
+         *
+         * @param string $content html content
+         *
+         * @return string updated images if any
+         */
+        public function filterContentBackgroundImages($content)
+        {
+            $match = '#<[^>]*background\-image[^url]*url[^(]*\(([^\)]*)\)[^>]*>#';
+            return preg_replace_callback(
+                $match,
+                function ($matches) {
+                    $newtag = $matches[0];
+                    $url = $matches[1];
+                    $newtag = str_replace($url, NGLL::dataImg(), $newtag);
+                    $newtag = str_replace(
+                        '>', 
+                        NGLL::dataAttrValue($url, true) . 
+                        '>', 
+                        $newtag
+                    );
+                    return $newtag;
+                },
+                $content
+            );
+        }
+
+        /**
          * Replacing all images with
          * lazy-load attributes
          *
@@ -81,13 +111,13 @@ if (!class_exists("nglazyload")) {
          *
          * @return string updated images if any
          */
-        public function filterContent($content)
+        public function filterContentTags($content)
         {
             $xmlprefix = '<?xml encoding="utf-8" ?>';
             $doc = new DOMDocument('1.0', 'UTF-8');
             $doc->loadHTML(
                 $xmlprefix . $content //,
-                //            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+                // LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
             );
             $images = $doc->getElementsByTagName('img');
             if ($images->length == 0) {
@@ -103,8 +133,8 @@ if (!class_exists("nglazyload")) {
                     $xmlprefix,
                     '',
                     preg_replace(
-                        '~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i',
-                        '',
+                        '~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i', 
+                        '', 
                         $doc->saveHTML()
                     )
                 )
@@ -112,7 +142,7 @@ if (!class_exists("nglazyload")) {
         }
 
         /**
-         * Engueue plugin.js
+         * Enqueue plugin.js
          *
          * @return void
          */
@@ -162,13 +192,18 @@ abstract class NGLL
     /**
      * Generate data html tag attribute for real image
      *
-     * @param string $src string with link
+     * @param string $src        string with link
+     * @param bool   $background if tag for background image
      *
      * @return void
      */
-    public static function dataAttrValue($src)
+    public static function dataAttrValue($src, $background = false)
     {
-        return ' ' . self::dataAttr . '="' . $src . '" ';
+        $suffix = '';
+        if ($background) {
+            $suffix = 'b';
+        }
+        return ' ' . self::dataAttr() . $suffix . '="' . $src . '"';
     }
 
     /**

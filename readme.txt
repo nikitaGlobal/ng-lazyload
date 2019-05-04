@@ -2,8 +2,6 @@
 Contributors: nikitaglobal
 Plugin Name: NG-Lazyload
 Tags: images, lazy load, lazyload, thumbnail, optimize content
-Plugin URI: https://perishablepress.com/press/2009/12/22/protect-wordpress-against-malicious-url-requests/
-Tags: wp, protect, php, eval, malicious, url
 Author URI: https://nikita.global
 Author: Nikita Menshutin
 Requires at least: 3.6
@@ -23,6 +21,7 @@ Developed by Nikita Menshutin
 == Description ==
 
 NG-Lazyload plugin replaces all the thumbails and images in the content with the smallest image possible (1 pixel gif) and then shows the full image only when it is in viewport.
+The only plugin which also works with background images in style tag
 
 == Installation ==
 
@@ -34,6 +33,9 @@ Use WordPress' Add New Plugin feature, searching "NG-Lazyload", or download the 
 4. No more actions required
 
 == Changelog ==
+
+= 1.2 (2019-05-04)
+* Now modifies style tags which have background-images. Useful when you have sliders like slick or owl caroussel.
 
 = 1.0 (2019-05-02) =
 * The First Upload, but was tested before at several sites
