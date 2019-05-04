@@ -2,8 +2,6 @@
 Contributors: nikitaglobal
 Plugin Name: NG-Lazyload
 Tags: images, lazy load, lazyload, thumbnail, optimize content
-Plugin URI: https://perishablepress.com/press/2009/12/22/protect-wordpress-against-malicious-url-requests/
-Tags: wp, protect, php, eval, malicious, url
 Author URI: https://nikita.global
 Author: Nikita Menshutin
 Requires at least: 3.6
