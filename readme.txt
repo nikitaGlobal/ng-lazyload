@@ -6,9 +6,9 @@ Author URI: https://nikita.global
 Author: Nikita Menshutin
 Requires at least: 3.6
 Tested up to: 5.1
-Stable tag: 1.0
+Stable tag: 1.3
 Requires PHP: 5.6
-Version: 1.0 
+Version: 1.3
 License: 			GPLv2 or later
 License URI: 		http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,7 +34,10 @@ Use WordPress' Add New Plugin feature, searching "NG-Lazyload", or download the 
 
 == Changelog ==
 
-= 1.2 (2019-05-04)
+= 1.3 (2019-05-05) =
+* Added icon
+
+= 1.2 (2019-05-04) =
 * Now modifies style tags which have background-images. Useful when you have sliders like slick or owl caroussel.
 
 = 1.0 (2019-05-02) =
