@@ -4,7 +4,7 @@
 Plugin Name: NG Lazyload
 Description: Implements lazyload for thumbnails and content images
 Author: Nikita Menshutin
-Version: 1.2
+Version: 1.4
 Author URI: http://nikita.global
 
 PHP version 7.2
@@ -36,7 +36,7 @@ if (!class_exists("nglazyload")) {
         public function __construct()
         {
             $this->prefix = 'nglazyload';
-            $this->version = '1.2';
+            $this->version = '1.4';
             add_action('wp_enqueue_scripts', array($this, 'scripts'));
             add_filter(
                 'post_thumbnail_html',

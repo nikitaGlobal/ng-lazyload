@@ -1,14 +1,7 @@
 $(document).ready(function () {
-	nglazyLoad();
 	setInterval(function () {
 		nglazyLoad();
 	}, 500);
-	$(window).scroll(function () {
-		nglazyLoad();
-	});
-	$(window).resize(function () {
-		nglazyLoad();
-	});
 });
 
 function nglazyLoad() {
