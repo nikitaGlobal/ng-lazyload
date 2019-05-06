@@ -34,6 +34,9 @@ Use WordPress' Add New Plugin feature, searching "NG-Lazyload", or download the 
 
 == Changelog ==
 
+= 1.4 (2019-05-06) =
+* Slightly optimized js
+
 = 1.3 (2019-05-05) =
 * Added icon
 
