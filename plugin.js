@@ -1,29 +1,30 @@
-$(document).ready(function () {
+jQuery(document).ready(function () {
 	setInterval(function () {
 		nglazyLoad();
 	}, 500);
 });
 
 function nglazyLoad() {
-	$('[data-ngll-srcB]').each(function () {
-		if ($(this).isInViewport()) {
-			$(this).css(
-				'background-image', 'url(' + $(this).data('ngll-srcb') + ')'
+	jQuery('[data-ngll-srcB]').each(function () {
+		if (jQuery(this).isInViewport()) {
+			jQuery(this).css(
+				'background-image', 'url(' + jQuery(this).data('ngll-srcb') + ')'
 			);
-			$(this).removeAttr('data-ngll-srcB');
+			jQuery(this).removeAttr('data-ngll-srcB');
 		}
 	})
-	$('img[data-ngll-src]').each(function () {
-		if ($(this).isInViewport()) {
-			$(this).attr('src', $(this).data('ngll-src'));
-			$(this).removeAttr('data-ngll-src');
+	jQuery('img[data-ngll-src]').each(function () {
+		if (jQuery(this).isInViewport()) {
+			jQuery(this).attr('src', jQuery(this).data('ngll-src'));
+			jQuery(this).removeAttr('data-ngll-src');
 		}
 	});
 }
+
 jQuery.fn.isInViewport = function () {
-	var elementTop = $(this).offset().top;
-	var elementBottom = elementTop + $(this).outerHeight();
-	var viewportTop = $(window).scrollTop();
-	var viewportBottom = viewportTop + $(window).height();
+	var elementTop = jQuery(this).offset().top;
+	var elementBottom = elementTop + jQuery(this).outerHeight();
+	var viewportTop = jQuery(window).scrollTop();
+	var viewportBottom = viewportTop + jQuery(window).height();
 	return elementBottom > viewportTop && elementTop < viewportBottom;
 };
