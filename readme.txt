@@ -5,8 +5,8 @@ Tags: images, lazy load, lazyload, thumbnail, optimize content
 Author URI: https://nikita.global
 Author: Nikita Menshutin
 Requires at least: 3.6
-Tested up to: 5.1
-Stable tag: 1.4
+Tested up to: 5.2.3
+Stable tag: 1.6
 Requires PHP: 5.6
 Version: 1.4
 License: 			GPLv2 or later
@@ -27,12 +27,18 @@ The only plugin which also works with background images in style tag
 
 Use WordPress' Add New Plugin feature, searching "NG-Lazyload", or download the archive and:
 
-1. Unzip the archive on your computer  
+1. Unzip the archive on your computer
 2. Upload plugin directory to the `/wp-content/plugins/` directory
 3. Activate the plugin through the 'Plugins' menu in WordPress
 4. No more actions required
 
 == Changelog ==
+
+= 1.6 (2019-09-95) =
+* Tested up to 5.2.3
+
+= 1.5 (2019-09-05) =
+* jQuery noConflict script
 
 = 1.4 (2019-05-06) =
 * Slightly optimized js
