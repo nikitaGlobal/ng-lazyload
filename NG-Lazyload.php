@@ -4,7 +4,7 @@
 Plugin Name: NG Lazyload
 Description: Implements lazyload for thumbnails and content images
 Author: Nikita Menshutin
-Version: 1.6
+Version: 1.7
 Author URI: http://nikita.global
 
 PHP version 7.2
@@ -36,7 +36,7 @@ if (!class_exists("nglazyload")) {
         public function __construct()
         {
             $this->prefix = 'nglazyload';
-            $this->version = '1.6';
+            $this->version = '1.7';
             add_action('wp_enqueue_scripts', array($this, 'scripts'));
             add_filter(
                 'post_thumbnail_html',
@@ -115,7 +115,7 @@ if (!class_exists("nglazyload")) {
         {
             $xmlprefix = '<?xml encoding="utf-8" ?>';
             $doc = new DOMDocument('1.0', 'UTF-8');
-            $doc->loadHTML(
+            @$doc->loadHTML(
                 $xmlprefix . $content //,
                 // LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
             );
@@ -133,7 +133,7 @@ if (!class_exists("nglazyload")) {
                     $xmlprefix,
                     '',
                     preg_replace(
-                        '~<(?:!DOCTYPE|/?(?:html|head|body))[^>]*>\s*~i',
+                        '~<(?:!DOCTYPE|/?(?:html|body))[^>]*>\s*~i',
                         '',
                         $doc->saveHTML()
                     )
@@ -148,6 +148,12 @@ if (!class_exists("nglazyload")) {
          */
         public function scripts()
         {
+            wp_register_style($this->prefix.'css',
+            plugin_dir_url(__FILE__).'/nglazyload.css',
+            array(),
+            $this->version
+            );
+            wp_enqueue_style($this->prefix.'css');
             wp_register_script(
                 $this->prefix,
                 plugin_dir_url(__FILE__) . '/plugin.js',

@@ -5,7 +5,7 @@ Tags: images, lazy load, lazyload, thumbnail, optimize content
 Author URI: https://nikita.global
 Author: Nikita Menshutin
 Requires at least: 3.6
-Tested up to: 5.2.3
+Tested up to: 5.3.2
 Stable tag: 1.6
 Requires PHP: 5.6
 Version: 1.4
@@ -32,7 +32,16 @@ Use WordPress' Add New Plugin feature, searching "NG-Lazyload", or download the 
 3. Activate the plugin through the 'Plugins' menu in WordPress
 4. No more actions required
 
+For theme developers: add nglazyload class to html blocks with background images
+to lazy-load them if they are stated in css file.
+If html block has style="background-image: url(...)" you don't have to.
+
 == Changelog ==
+
+= 1.7 (2020-02-26)
+* Tested up to 5.3.2
+* Loads current and next viewport below
+* Add 'nglazyload' class to your html block to hide its background images from preloading
 
 = 1.6 (2019-09-95) =
 * Tested up to 5.2.3
