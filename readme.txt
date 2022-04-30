@@ -5,8 +5,8 @@ Tags: images, lazy load, lazyload, thumbnail, optimize content
 Author URI: https://nikita.global
 Author: Nikita Menshutin
 Requires at least: 3.6
-Tested up to: 5.3.2
-Stable tag: 1.6
+Tested up to: 5.9.3
+Stable tag: 1.8
 Requires PHP: 5.6
 Version: 1.4
 License: 			GPLv2 or later
@@ -37,6 +37,9 @@ to lazy-load them if they are stated in css file.
 If html block has style="background-image: url(...)" you don't have to.
 
 == Changelog ==
+= 1.8 (2022-05-01)
+* Tested up to 5.9.3
+* Minor js updates
 
 = 1.7 (2020-02-26)
 * Tested up to 5.3.2

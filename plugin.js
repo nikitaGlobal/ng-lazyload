@@ -28,9 +28,9 @@ function nglazyLoad() {
 }
 
 jQuery.fn.isInViewport = function () {
-    var elementTop = jQuery(this).offset().top;
-    var elementBottom = elementTop + jQuery(this).outerHeight();
-    var viewportTop = jQuery(window).scrollTop();
-    var viewportBottom = viewportTop + jQuery(window).height()*2;
+    let elementTop = jQuery(this).offset().top;
+    let elementBottom = elementTop + jQuery(this).outerHeight();
+    let viewportTop = jQuery(window).scrollTop();
+    let viewportBottom = viewportTop + jQuery(window).height()*2;
     return elementBottom > viewportTop && elementTop < viewportBottom;
 };
