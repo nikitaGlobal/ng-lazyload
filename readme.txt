@@ -40,6 +40,7 @@ If html block has style="background-image: url(...)" you don't have to.
 = 1.8 (2022-05-01)
 * Tested up to 5.9.3
 * Minor js updates
+* Fixed one filters' conflict
 
 = 1.7 (2020-02-26)
 * Tested up to 5.3.2
